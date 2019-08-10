@@ -34,7 +34,6 @@ export class RecipeListComponent implements OnInit {
       this.recipeService.fetchRecipes().subscribe(
         (recipes: RecipeModel[]) => {
           this.loading = false;
-          // this.recipes = recipes;
           if (recipes.length === 0) {
             this.noRecipeMsg = true;
           }
