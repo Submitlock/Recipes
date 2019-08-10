@@ -1,0 +1,37 @@
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a 
+            class="nav-link" 
+            href="#" [routerLink]="['']" 
+            routerLinkActive="active" 
+            [routerLinkActiveOptions]="{exact: true}">
+                Home
+        </a>
+    </li>
+    <li class="nav-item">
+        <a 
+            class="nav-link" 
+            href="#" 
+            [routerLink]="['recipes']" 
+            routerLinkActive="active">
+                Recipes
+        </a>
+    </li>
+    <li class="nav-item">
+        <a 
+            class="nav-link" 
+            href="#" 
+            [routerLink]="['recipes', 'new']" 
+            routerLinkActive="active">
+                New Recipe
+        </a>
+    </li>
+    <li class="nav-item" *ngIf="user">
+        <a 
+            class="nav-link" 
+            href="#"  
+            (click)="onLogOut($event)">
+                Log Out
+        </a>
+    </li>
+</ul>

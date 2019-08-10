@@ -1,0 +1,18 @@
+<div class="card shadow" *ngIf="recipe">
+    <img [src]="recipe.img" class="card-img-top">
+    <div class="card-body">
+        <h5 class="card-title"> {{recipe.title}} <br> <span class="small text-muted">posted by: {{recipe.user}}</span> </h5>
+        <p class="card-text"> {{recipe.description}} </p>
+        <ul *ngIf="recipe.ingridients">
+            <li *ngFor="let ingridient of recipe.ingridients"> {{ingridient.name}} - {{ingridient.count}} </li>
+        </ul>
+        <div class="d-flex justify-content-between">
+            <a href="#" class="btn btn-primary" [routerLink]="['edit']" *ngIf="recipe.user === user.email">Edit Recipe</a>
+            <button class="btn btn-danger" *ngIf="recipe.user === user.email" (click)="deleteRecipe()"> 
+                Delete Recipe 
+                <app-btn-loader *ngIf="loading"></app-btn-loader>
+            </button>
+        </div>
+    </div>
+</div>
+<app-alert *ngIf="errorMsg"> {{errorMsg}} </app-alert>

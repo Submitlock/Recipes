@@ -1,0 +1,7 @@
+<h4 class="text-center" *ngIf="!loading && recipes.length > 0"> Please, select a Recipes! </h4>
+<div class="list-group" *ngIf="recipes.length > 0">
+    <a href="#" class="list-group-item list-group-item-action" *ngFor="let recipe of recipes" [routerLink]="[recipe.id]"> {{recipe.title}} </a>
+</div>
+<app-loader *ngIf="loading && recipes.length === 0"></app-loader>
+<h4 class="text-center" *ngIf="noRecipeMsg"> There are no Recipes! </h4>
+<app-alert *ngIf="error">{{error}}</app-alert>

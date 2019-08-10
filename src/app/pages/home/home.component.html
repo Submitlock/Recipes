@@ -1,0 +1,11 @@
+<div class="w-50 mx-auto">
+    <app-auth-form *ngIf="!user"></app-auth-form>
+    
+    <div class="card shadow" *ngIf="user">
+        <div class="card-body">
+            <h5 class="card-title">Logged as: <i>{{user.email}}</i> </h5>
+            <a href="#" class="card-link" (click)="onLogOut($event)">Log Out</a>
+        </div>
+    </div>
+
+</div>

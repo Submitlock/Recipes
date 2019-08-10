@@ -1,0 +1,47 @@
+<div class="card shadow">
+    <div class="card-body">
+            <h3 class="card-title underline text-center"> <u>{{mode === 'new' ? 'New Recipe' : 'Edit Recipe'}}</u> </h3>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <label for="title"> <b>Title:</b> </label>
+                <input type="text" class="form-control" formControlName="title">
+            </div>
+            <div class="form-group">
+                <label for="description"> <b>Description:</b> </label>
+                <textarea class="form-control" formControlName="description"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="img"> <b>Image URL</b> </label>
+                <input type="text" class="form-control" formControlName="img" placeholder="paste img url">
+                <div class="text-center my-2" *ngIf="form.value.img">
+                    <img [src]="form.value.img" class="img-thumbnail">
+                </div>
+            </div>
+            <div formArrayName="ingridients">
+                <div class="row my-1" *ngFor="let item of getArray(); let i = index" [formGroupName]="i">
+                    <div class="col-8 position-relative">
+                        <div class="form-group">
+                            <button class="btn btn-danger btn-sm" type="button" (click)="removeIngridient(i)">x</button>
+                            <label for="name"> <b class="small">Ingridient:</b> </label>
+                            <input type="text" class="form-control" formControlName="name">
+                        </div> 
+                    </div>
+                    <div class="col-4"> 
+                        <div class="form-group">
+                            <label for="count"> <b class="small">Count:</b> </label>
+                            <input type="number" class="form-control" formControlName="count">
+                        </div> 
+                    </div>
+                </div>
+                <p class="text-right my-2"><a href="#" class="badge badge-info" (click)="onAddIngridient($event)">Add Ingridient</a></p>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit" [disabled]="!form.valid">
+                    {{mode === 'new' ? 'Create Recipe' : 'Update Recipe'}}
+                    <app-btn-loader *ngIf="loading"></app-btn-loader>
+                </button>
+            </div>
+        </form>
+        <app-alert *ngIf="errorMsg"> {{errorMsg}} </app-alert>
+    </div>
+</div>

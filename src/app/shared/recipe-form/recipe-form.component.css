@@ -1,0 +1,11 @@
+.col-8 button {
+    transform: scale(.5);
+    position: absolute;
+    border-radius: 50%;
+    left: 3px;
+    top: 20px;
+    transition: .2s ease;
+}
+.col-8 button:hover {
+    transform: scale(.7);
+}

@@ -1,0 +1,24 @@
+<div class="card shadow">
+    <div class="card-body">
+        <h3 class="card-title underline text-center"> <u>{{isLoginMode ? 'Sign In' : 'Sign Up'}}</u> </h3>
+        <form #f="ngForm" (ngSubmit)="onSubmit(f)">
+            <div class="form-group">
+                <label for="email"> <b>Email:</b> </label>
+                <input type="email" class="form-control" ngModel name="email" required email>
+                <span class="text-muted"> must be a valid email </span>
+            </div>
+            <div class="form-group">
+                <label for="password"> <b>Password:</b> </label>
+                <input type="password" class="form-control" ngModel name="password" required minlength="6">
+                <span class="text-muted"> minimum length of 6 characters </span>
+            </div>
+            <div class="form-group d-flex justify-content-between">
+                <button class="btn btn-primary" type="submit" [disabled]="!f.valid">{{isLoginMode ? 'Log In' : 'Register'}}</button>
+                <button class="btn btn-info" type="button" (click)="isLoginMode = !isLoginMode">Switch to {{isLoginMode ? 'Sign Up' : 'Sign In'}}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<app-loader *ngIf="loading"></app-loader>
+<app-alert *ngIf="errorMsg">{{errorMsg}}</app-alert>
