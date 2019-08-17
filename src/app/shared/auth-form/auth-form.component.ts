@@ -1,8 +1,8 @@
-import { AuthService } from './../../services/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { AuthService } from './../../services/auth.service';
 
 @Component({
   selector: 'app-auth-form',
@@ -24,7 +24,7 @@ export class AuthFormComponent implements OnInit {
   onSubmit(form: NgForm) {
     let authObservable = new Observable();
     this.loading = true;
-    // STORE FORM INPUTS IN OBJECT
+    // DECLARE FORM INPUTS
     const email = form.value.email;
     const password = form.value.password;
     // SUBMIT DEPENDING ON THE MODE

@@ -5,7 +5,9 @@ import { throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { RecipeModel } from '../models/recipe.model';
 import { IngridientModel } from '../models/ingridient.model';
-import { stringify } from 'querystring';
+
+interface SuccessResponseRecipes { [name: string]: RecipeModel; }
+interface SuccessResponseShopping { [name: string]: IngridientModel; }
 
 
 @Injectable({
@@ -16,15 +18,15 @@ export class HttpService {
   constructor(private http: HttpClient, private authService: AuthService) { }
 
   fetchRecipes() {
-    return this.http.get('https://recipes-3bdfb.firebaseio.com/recipes.json')
+    return this.http.get<SuccessResponseRecipes>('https://recipes-3bdfb.firebaseio.com/recipes.json')
           .pipe(
             catchError( this.handleHttpErrorResponse ),
-            map( res => this.handleHttpSuccessResponse(res) ),
+            map( res => this.handleRecipeSuccessResponse(res) ),
           );
   }
 
   addRecipe(recipe: RecipeModel) {
-     return this.http.post<any>(
+     return this.http.post<{name: string}>(
             'https://recipes-3bdfb.firebaseio.com/recipes.json',
             recipe
           )
@@ -38,12 +40,12 @@ export class HttpService {
   }
 
   editRecipe(recipe: RecipeModel, id: string) {
-    return this.http.put<any>(
+    return this.http.put<RecipeModel>(
       'https://recipes-3bdfb.firebaseio.com/recipes/' + id + '.json',
       recipe
     )
     .pipe(
-      map( res => {
+      map( () => {
         recipe.id = id;
         return recipe;
       }),
@@ -59,15 +61,16 @@ export class HttpService {
   }
 
   handleHttpErrorResponse(err: HttpErrorResponse) {
-    console.log(err);
     return throwError('Error ocured');
   }
-  handleHttpSuccessResponse(res: any) {
+
+  // TRANSFORMS SUCCESS RECIPE RESPONSE IN RECIPE MODEL[]
+  handleRecipeSuccessResponse(res: SuccessResponseRecipes): RecipeModel[] {
     const recipes: RecipeModel[] = [];
     if (res) {
       Object.keys(res).map(key => {
         const ingridients: IngridientModel[] = [];
-        if (res[key].ingridients.length > 0) {
+        if (res[key].ingridients && res[key].ingridients.length > 0) {
           res[key].ingridients.map( (ingridient: {name: string, count: number}) =>
             ingridients.push( new IngridientModel(ingridient.name, ingridient.count) )
           );
@@ -85,4 +88,57 @@ export class HttpService {
     }
     return recipes;
   }
+
+  // SHOPPING
+
+  addToShoppingList(shoppingItem: IngridientModel) {
+    return this.http.post<{name: string}>(
+          'https://recipes-3bdfb.firebaseio.com/shopping.json',
+          shoppingItem
+          )
+          .pipe(
+            map( res => {
+              shoppingItem.id = res.name;
+              return shoppingItem;
+            }),
+            catchError( this.handleHttpErrorResponse )
+          );
+  }
+
+  fetchShoppingList() {
+    return this.http.get<SuccessResponseShopping>('https://recipes-3bdfb.firebaseio.com/shopping.json')
+          .pipe(
+            map( res => this.handleShoppingListSuccessResponse(res) ),
+            catchError(this.handleHttpErrorResponse)
+          );
+  }
+
+  updateShoppingItem(shoppingItem: IngridientModel) {
+    return this.http.put<IngridientModel>(
+            'https://recipes-3bdfb.firebaseio.com/shopping/' + shoppingItem.id + '.json',
+            shoppingItem
+          ).pipe(
+            catchError( this.handleHttpErrorResponse )
+          );
+  }
+
+  deleteShoppingItem(shoppingItem: IngridientModel) {
+    return this.http.delete<any>('https://recipes-3bdfb.firebaseio.com/shopping/' + shoppingItem.id + '.json')
+          .pipe(
+            catchError( this.handleHttpErrorResponse )
+          );
+  }
+
+  // TRANSFORMS SUCCESS SHOPPING INGRIDIENT RESPONSE IN INGRIDENT MODEL[]
+  handleShoppingListSuccessResponse(res: any) {
+    const shoppingList: IngridientModel[] = [];
+    if (res) {
+      Object.keys(res).map( key => {
+        const item = new IngridientModel(res[key].name, res[key].count, key);
+        shoppingList.push(item);
+      });
+    }
+    return shoppingList;
+  }
+
 }

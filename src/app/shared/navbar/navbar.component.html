@@ -8,7 +8,7 @@
                 Home
         </a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item" *ngIf="user">
         <a 
             class="nav-link" 
             href="#" 
@@ -17,7 +17,7 @@
                 Recipes
         </a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item" *ngIf="user">
         <a 
             class="nav-link" 
             href="#" 
@@ -29,9 +29,20 @@
     <li class="nav-item" *ngIf="user">
         <a 
             class="nav-link" 
+            href="#" 
+            [routerLink]="['shopping']" 
+            routerLinkActive="active">
+                Shopping
+        </a>
+    </li>
+    <li class="nav-item" *ngIf="user">
+        <a 
+            class="nav-link" 
             href="#"  
             (click)="onLogOut($event)">
                 Log Out
         </a>
     </li>
 </ul>
+
+<app-alert *ngIf="errorMsg">{{errorMsg}}</app-alert>

@@ -1,0 +1,7 @@
+button {
+    position: absolute;
+    right: -12px;
+    top: -12px;
+    border-radius: 50%;
+    transform: scale(0.7);
+}

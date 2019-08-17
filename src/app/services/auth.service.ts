@@ -41,16 +41,19 @@ export class AuthService {
               tap(res => this.handleAuthSuccessResponse(res))
             );
   }
+
   register(email: string, password: string) {
     return this.http.post<AuthResponseData>(
             'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + this.firebaseAPI,
             {email, password, returnSecureToken: true}
           ).pipe(
             catchError(this.handleAuthErrorResponse),
-            tap(res => this.handleAuthSuccessResponse(res))
+            tap( (res: AuthResponseData) => this.handleAuthSuccessResponse(res))
           );
   }
 
+  // TRANSFORM ERROR RESPONSE IN A MORE READABLE FORMAT
+  // AND SENDS IT TO BE DISPLAYED AS ALERT DIV IN COMPONENT
   handleAuthErrorResponse(err: HttpErrorResponse) {
     let errorMsg = 'Error ocured';
     if (err.error.error.message) {
@@ -78,7 +81,10 @@ export class AuthService {
     return throwError(errorMsg);
   }
 
-  handleAuthSuccessResponse(res: any) {
+  // TRANSFORMS SUCCESS RESPONSE IN USERMODEL
+  // STORES IT IN SERVICE AND LOCALSTOROGE
+  // UPDATES WITH SUBJECT.NEXT()
+  handleAuthSuccessResponse(res: AuthResponseData) {
     const expires = new Date(new Date().getTime() + +res.expiresIn * 1000);
     const user = new UserModel(res.email, res.idToken, expires);
     this.user = user;
@@ -86,12 +92,13 @@ export class AuthService {
     this.localStorageService.saveItem('user', user);
   }
 
-  // RETUR USER IF USER OR IF USER IN LOCAL STORAGE
+  // GET USER FROM SERVICE
+  // CHECKES IN LOCALSTORAGE IF NO USER
   getUser() {
     if (this.user) {
       return this.user;
     } else {
-      const localStorageUser = this.localStorageService.getItem('user');
+      const localStorageUser: UserModel = this.localStorageService.getItem('user');
       if (localStorageUser) {
         this.user = localStorageUser;
         this.userUpdate.next(localStorageUser);
@@ -101,6 +108,9 @@ export class AuthService {
     return null;
   }
 
+  // CLEARS LOCALSTROAGE AND SERVICE
+  // UPDATES WITH SUBJECT.NEXT(NULL)
+  // NAVIGATES TO HOME
   logOut() {
     this.user = null;
     this.localStorageService.removeItem('user');

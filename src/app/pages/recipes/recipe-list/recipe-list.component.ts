@@ -1,5 +1,6 @@
+import { ActivatedRoute } from '@angular/router';
 import { RecipeService } from './../../../services/recipe.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RecipeModel } from 'src/app/models/recipe.model';
 
 @Component({
@@ -7,7 +8,7 @@ import { RecipeModel } from 'src/app/models/recipe.model';
   templateUrl: './recipe-list.component.html',
   styleUrls: ['./recipe-list.component.css']
 })
-export class RecipeListComponent implements OnInit {
+export class RecipeListComponent implements OnInit, OnDestroy {
 
   constructor(private recipeService: RecipeService) { }
 
@@ -15,36 +16,42 @@ export class RecipeListComponent implements OnInit {
   error: string;
   noRecipeMsg = false;
   recipes: RecipeModel[] = [];
+  sub: any;
 
   ngOnInit() {
+    this.initSetup();
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
+  }
+
+  initSetup() {
+    // GET USERS IF IN SERVICE OR LOCALSTORAGE
     this.recipes = this.recipeService.getRecipes();
     if (this.recipes.length > 0) {
       this.loading = false;
     }
-    this.recipeService.recipesUpdated.subscribe( recipes => {
+    // SUBSCRIBE FOR UPDATING VIA SUBJECT
+    this.sub = this.recipeService.recipesUpdated.subscribe( recipes => {
+      this.loading = false;
       this.recipes = recipes;
-      if (this.recipes.length > 0) {
+      if (recipes.length > 0) {
         this.noRecipeMsg = false;
       } else {
         this.noRecipeMsg = true;
       }
     });
-
+    // MAKING HTTP REQUEST FOR FETCHING FROM DATABASE IF GETRECIPES RETURNS [],
+    // UPDATE VIA SUBJECT
     if (this.recipes.length === 0) {
       this.recipeService.fetchRecipes().subscribe(
-        (recipes: RecipeModel[]) => {
-          this.loading = false;
-          if (recipes.length === 0) {
-            this.noRecipeMsg = true;
-          }
-        },
+        () => {return; },
         err => {
           this.loading = false;
           this.error = err;
         }
       );
     }
-
   }
-
 }

@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppRouting } from './app-navigation';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
@@ -14,9 +14,13 @@ import { AlertComponent } from './shared/alert/alert.component';
 import { NewRecipeComponent } from './pages/recipes/new-recipe/new-recipe.component';
 import { EditRecipeComponent } from './pages/recipes/edit-recipe/edit-recipe.component';
 import { RecipeListComponent } from './pages/recipes/recipe-list/recipe-list.component';
-import { RecipeFormComponent } from './shared/recipe-form/recipe-form.component';
+import { RecipeFormComponent } from './pages/recipes/recipe-form/recipe-form.component';
 import { ViewRecipeComponent } from './pages/recipes/view-recipe/view-recipe.component';
 import { BtnLoaderComponent } from './shared/btn-loader/btn-loader.component';
+import { ShoppingComponent } from './pages/shopping/shopping.component';
+import { ShoppingFormComponent } from './pages/shopping/shopping-form/shopping-form.component';
+import { ShoppingListComponent } from './pages/shopping/shopping-list/shopping-list.component';
+import { InterceptorService } from './services/interceptor.service';
 
 @NgModule({
   declarations: [
@@ -33,6 +37,9 @@ import { BtnLoaderComponent } from './shared/btn-loader/btn-loader.component';
     RecipeFormComponent,
     ViewRecipeComponent,
     BtnLoaderComponent,
+    ShoppingComponent,
+    ShoppingFormComponent,
+    ShoppingListComponent,
   ],
   imports: [
     BrowserModule,
@@ -41,7 +48,7 @@ import { BtnLoaderComponent } from './shared/btn-loader/btn-loader.component';
     FormsModule,
     ReactiveFormsModule
   ],
-  providers: [],
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: InterceptorService, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

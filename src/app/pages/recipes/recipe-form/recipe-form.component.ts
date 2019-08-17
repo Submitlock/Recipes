@@ -1,5 +1,5 @@
-import { UserModel } from './../../models/user.model';
-import { AuthService } from './../../services/auth.service';
+import { UserModel } from '../../../models/user.model';
+import { AuthService } from '../../../services/auth.service';
 import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { RecipeModel } from 'src/app/models/recipe.model';
@@ -33,7 +33,14 @@ export class RecipeFormComponent implements OnInit {
 
   ngOnInit() {
     this.initForm();
+    this.initSetup();
+  }
+
+  initSetup() {
+    // GET USER
     this.user = this.authService.getUser();
+    // EDIT MODE -> LOOKS FOR RECIPE IN SERVICE AND LOCALSTROAGE
+    // SETS THE FORM IF FOUND
     this.route.params.subscribe( params => {
       this.id = params.id;
       const selectRecipe = this.recipeService.getSingleRecipe(this.id);
@@ -42,6 +49,8 @@ export class RecipeFormComponent implements OnInit {
         this.setForm();
       }
     });
+    // EDIT MODE -> IF NO RECIPE IS FOUND, HTTP REQUEST WILL BE MADE FROM RECIPELIST COMPONENT,
+    // THAT MAKES HTTP REQUEST AND LOOKS FOR THE RECIPE IN THE DB, SETS THE FORM AFTER
     this.recipeService.recipesUpdated.subscribe( recipes => {
       const selectRecipe = this.recipeService.getSingleRecipe(this.id);
       if (selectRecipe) {
@@ -66,6 +75,7 @@ export class RecipeFormComponent implements OnInit {
   }
 
   onSubmit() {
+    // CREATES RECIPEMODEL FROM THE FORM CONTROLS
     this.loading = true;
     const userEmail = this.user.email;
     const title = this.form.value.title;
@@ -74,9 +84,9 @@ export class RecipeFormComponent implements OnInit {
     const ingridients: IngridientModel[] = [];
     this.getArray().map( control => ingridients.push(new IngridientModel(control.value.name, control.value.count)));
     const recipe = new RecipeModel(title, description, img, ingridients, userEmail);
-
+    // SET OBSERVABLE TO BE SUBSCRIBED TO,
+    // DEPENDING ON THE MODE AND HTTP REQUEST MADE
     let observable = new Observable();
-
     if (this.mode === 'new') {
       observable = this.recipeService.addRecipe(recipe);
     }
@@ -95,6 +105,7 @@ export class RecipeFormComponent implements OnInit {
     );
   }
 
+  // ADDING DYNAMICLY INGRIDIENT CONTROLS
   onAddIngridient(event: Event) {
     event.preventDefault();
     this.getArray().push(

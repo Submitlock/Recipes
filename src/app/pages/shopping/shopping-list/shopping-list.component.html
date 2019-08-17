@@ -1,0 +1,12 @@
+<h3 class="text-center" *ngIf="noItemsMsg">No Shopping Items</h3>
+<app-loader *ngIf="loading"></app-loader>
+
+<div class="list-group shadow" *ngIf="shoppingList.length > 0">
+    <a 
+        href="#"
+        class="list-group-item list-group-item-action position-relative"
+        *ngFor="let item of shoppingList"
+        (click)="onSelect($event, item)"> 
+            {{item.name}} - count: {{item.count}}
+    </a>
+</div>

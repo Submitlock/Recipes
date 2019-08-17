@@ -1,0 +1,37 @@
+<div class="card shadow">
+    <div class="card-body">
+        <h3 class="card-title underline text-center"> 
+            <u>{{ mode === 'create' ? 'Add to Shopping List' : 'Edit Shopping item' }}</u> 
+        </h3>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="row">
+                <div class="col-8">
+                    <div class="form-group">
+                        <label> <b>Name:</b> </label>
+                        <input type="text" class="form-control" formControlName="name">
+                    </div>
+                </div>
+                <div class="col-4">
+                    <label> <b>Count:</b> </label>
+                    <input type="number" class="form-control" formControlName="count">
+                </div>
+                <div class="col-12 d-flex justify-content-between">
+                    <button class="btn btn-primary" type="submit" [disabled]="!form.valid">
+                        {{ mode === 'create' ? 'Add to List' : 'Edit ingridient' }}
+                        <app-btn-loader *ngIf="loading"></app-btn-loader>
+                    </button>
+                    <div *ngIf="mode === 'edit'">
+                        <button class="btn btn-danger mx-2" type="button" (click)="onDelete()"> 
+                            Delete 
+                            <app-btn-loader *ngIf="loading2"></app-btn-loader>
+                        </button>
+                        <button class="btn btn-secondary" type="button" (click)="backToCreateMode()"> Back  </button>
+                    </div>
+                </div>
+                <div class="col-12" *ngIf="errorMsg">
+                    <app-alert>{{errorMsg}}</app-alert>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
