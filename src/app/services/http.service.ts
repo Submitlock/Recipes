@@ -80,7 +80,7 @@ export class HttpService {
           res[key].description,
           res[key].img,
           ingridients,
-          this.authService.getUser().email,
+          res[key].user,
           key
         );
         recipes.push(recipe);
