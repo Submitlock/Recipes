@@ -1,3 +1,5 @@
+import { EditRouteProtectionService } from './services/edit-route-protection.service';
+import { CheckRecipeService } from './services/check-recipe.service';
 import { ShoppingComponent } from './pages/shopping/shopping.component';
 import { ViewRecipeComponent } from './pages/recipes/view-recipe/view-recipe.component';
 import { HomeComponent } from './pages/home/home.component';
@@ -10,11 +12,11 @@ import { RouteProtectionService } from './services/route-protection.service';
 
 const appRoutes: Routes = [
     { path: '', component: HomeComponent },
-    { path: 'recipes', component: RecipesComponent,
+    { path: 'recipes', component: RecipesComponent, canActivate: [RouteProtectionService],
         children: [
             {path: 'new', component: NewRecipeComponent},
-            {path: ':id', component: ViewRecipeComponent},
-            {path: ':id/edit', component: EditRecipeComponent},
+            {path: ':id', component: ViewRecipeComponent, canActivate: [CheckRecipeService]},
+            {path: ':id/edit', component: EditRecipeComponent, canActivate: [CheckRecipeService, EditRouteProtectionService]},
         ]
     },
     { path: 'shopping', component: ShoppingComponent, canActivate: [RouteProtectionService] },
